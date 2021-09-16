@@ -1,0 +1,6 @@
+package com.jslhrd.mysql.manager;
+
+public class DBManager {
+	private DBManager() {}
+	private static DBManager instance = new DBManager();
+}

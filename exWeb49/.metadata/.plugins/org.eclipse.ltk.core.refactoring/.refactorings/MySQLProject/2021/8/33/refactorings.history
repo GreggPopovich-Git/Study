@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy 2 elements to &apos;exServletJSTL/src/exServletJSTL.model.board&apos;&#x0D;&#x0A;- Original project: &apos;MySQLProject&apos;&#x0D;&#x0A;- Destination element: &apos;exServletJSTL/src/exServletJSTL.model.board&apos;&#x0D;&#x0A;- Original elements:&#x0D;&#x0A;     model.board.BoardDAO.java&#x0D;&#x0A;     model.board.BoardVO.java" description="Copy compilation units" destination="=exServletJSTL/src&lt;exServletJSTL.model.board" element1="/src&lt;model.board{BoardDAO.java" element2="/src&lt;model.board{BoardVO.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1628495115629" units="2" version="1.0"/>
+</session>

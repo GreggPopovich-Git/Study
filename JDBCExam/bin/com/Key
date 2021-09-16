@@ -1,0 +1,10 @@
+-- join : 두 테이블 결합 (emp, dept 의 공통되는 컬럼(필드)가 필요함.)
+-- emp의 eno, dept의 dno는 기본키 : 중복이 불가능
+-- emp의 dno는 외래키 : 다른테이블의 기본키
+use jsl49;
+select * from emp where eno = 7369;
+select * from dept where dno = 20;
+-- join 방법
+select eno, ename, hiredate, salary, emp.dno, dname from emp, dept where emp.dno = dept.dno;
+-- 테이블이름을 가명으로 변경
+select eno, ename, hiredate, salary, e.dno, dname from emp e, dept d where e.dno = d.dno;

@@ -1,0 +1,13 @@
+package com.jslhrd.mysql.manager;
+
+public class TestExam_01 {
+
+	public static void main(String[] args) {
+		TestSQL test = TestSQL();
+		// 입력
+		int dno = 60;
+		String name = "홍보";
+		String loc = "서울";
+	}
+
+}

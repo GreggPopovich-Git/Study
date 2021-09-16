@@ -1,0 +1,27 @@
+package com.jslhrd.mysql.manager;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+public class TestSQL {
+	DBManager manager = DBManager.getInstance();
+	Connection myConn = null;
+	Statement stmt = null;
+	ResultSet rs = null;
+	
+	// 1. dept 테이블에 등록 메소드 정의
+	public int deptInsert(int dno, String dname, String loc) {
+		String sql = "";
+		int row = 0; // 리턴타입
+		try {
+			myConn = manager.getConnection();
+			stmt = myConn.createStatement();
+			row = stmt.executeUpdate(sql);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			return row;
+		}
+	}
+}

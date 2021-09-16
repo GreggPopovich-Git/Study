@@ -1,0 +1,17 @@
+package service.admin.board;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import service.CommandHandler;
+
+public class BoardListHandler implements CommandHandler {
+
+	@Override
+	public String requestPro(HttpServletRequest request, HttpServletResponse response) throws Throwable {
+		
+		
+		return "/Admin/board_list.jsp";
+	}
+
+}

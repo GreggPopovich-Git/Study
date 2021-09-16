@@ -1,0 +1,7 @@
+package com.jslhrd.mysql.manager;
+
+public class DeptVO {
+	private int dno;
+	private String dname;
+	private String loc;
+}

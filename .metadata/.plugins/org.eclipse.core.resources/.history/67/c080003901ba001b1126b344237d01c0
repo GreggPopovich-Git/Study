@@ -1,0 +1,10 @@
+package com.jslhrd.mysql.manager;
+
+public class TestExam_01 {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+
+	}
+
+}

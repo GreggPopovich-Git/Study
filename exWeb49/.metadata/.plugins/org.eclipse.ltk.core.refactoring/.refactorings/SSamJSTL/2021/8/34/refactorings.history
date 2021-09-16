@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;CharacterEncodingFilter.java&apos; to &apos;MySample/src/MySample.util&apos;&#x0D;&#x0A;- Original project: &apos;SSamJSTL&apos;&#x0D;&#x0A;- Destination element: &apos;MySample/src/MySample.util&apos;&#x0D;&#x0A;- Original element: &apos;exServletJSTL.util.CharacterEncodingFilter.java&apos;" description="Copy compilation unit" destination="=MySample/src&lt;MySample.util" element1="/src&lt;exServletJSTL.util{CharacterEncodingFilter.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1629535799376" units="1" version="1.0"/>
+</session>

@@ -1,0 +1,26 @@
+package com.jslhrd.mysql.manager;
+
+import java.sql.Connection;
+
+public class DBManager {
+	private DBManager() {}
+	private static DBManager instance = new DBManager();
+	public static DBManager getInstance() {
+		return instance;
+	}
+	
+	public Connection getConnection() {
+		String myDriver = "com.mysql.jdbc.Driver";
+		String myURL = "jdbc:mysql://localhost:3306/jsl49";
+		String myID = "jsl49";
+		String myPass = "ehfkdl12";
+		
+		Connection myConn = null;
+		try {
+			Class.forName(myDriver);
+			
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+}

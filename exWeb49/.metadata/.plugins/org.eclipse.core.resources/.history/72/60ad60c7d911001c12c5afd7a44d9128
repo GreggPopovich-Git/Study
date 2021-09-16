@@ -1,0 +1,29 @@
+package service.admin.member;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import model.member.MemberDAO;
+import service.CommandHandler;
+
+public class MemberMailHandler implements CommandHandler {
+
+	@Override
+	public String requestPro(HttpServletRequest request, HttpServletResponse response) throws Throwable {
+		String users[] = request.getParameterValues("users");
+		MemberDAO dao = MemberDAO.getInstance();
+		List<String> list = new ArrayList<String>();
+		String mail = null;
+		for(int x = 0; x < users.length; x++) {
+			mail = dao.getEmail(users[x]);
+			list.add(mail);
+		}
+		
+		request.setAttribute("email", list);
+		return "/Admin/member_mail.jsp";
+	}
+
+}

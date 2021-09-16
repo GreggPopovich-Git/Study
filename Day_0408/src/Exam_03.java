@@ -1,0 +1,32 @@
+/* 	            1
+ * 	         3  2
+ * 	      6  5  4
+ *     10 9  8  7
+ *  15 14 13 12 11
+ * 
+ */
+public class Exam_03 {
+	public static void main(String[] args) {
+		int a[][] = new int[5][5];
+		int cnt = 0;
+		//데이터 입력
+		for (int x = 0; x < a.length; x++) {
+			for (int y = 4-x; y < a[x].length; y++) {
+				cnt++;
+				a[x][y] = cnt;
+			}
+		}
+		//데이터 출력
+		for (int x = 0; x < a.length; x++) {
+			for (int y = 0; y < a[x].length; y++) {
+				if (a[x][y] != 0) 
+					System.out.print(a[x][y] + "\t");
+				else
+					System.out.print("\t");
+			}
+			System.out.println();
+		}
+
+	}
+
+}

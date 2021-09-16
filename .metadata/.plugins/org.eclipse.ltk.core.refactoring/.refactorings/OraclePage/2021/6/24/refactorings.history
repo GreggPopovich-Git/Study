@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;OraclePage/src/OraclePage&apos; to &apos;OraclePage.sql&apos;" description="Rename resource &apos;OraclePage&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/OraclePage" name="OraclePage.sql" stamp="1623136848647" updateReferences="true"/>
+</session>

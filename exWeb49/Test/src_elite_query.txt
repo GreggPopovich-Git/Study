@@ -1,0 +1,382 @@
+/* UI정의서 v0.0.4기준 */
+
+/***********************공통 사항***********************/
+
+/* PAGE 8 */ 
+    /* login 시 DB에서 아이디에 해당하는 비번을 불러와서 사용자가 입력한 비번과 일치하면 로그인 */
+    /* getPassword*/
+    /* 체크 완료 */
+SELECT emp_pw
+  FROM emp
+WHERE emp_no = #{emp_no};
+
+/* PAGE 9 */
+
+    /* 사원의 이름, 직위, 부서명 가져오기*/
+    /* getWhoIAm*/
+    /* 체크 완료 */
+SELECT d.dept_name|| ' - ' || r.rank_name || ' - ' ||  e.emp_name /* 상단 정보 가져오기 */
+FROM emp e, dept d, rank r
+WHERE r.rank_no = e.rank_no AND e.dept_no = d.dept_no AND e.emp_no = #{emp_no};
+
+    /* 출근 시간 등록 */
+    /*insertAttendanceTime */
+    /* 체크 완료 */
+INSERT INTO attendance (attendance_code, emp_no, attendance_start_work) VALUES( #{attendance_code}, #{emp_no}, #{attendance_start_work});
+
+    /*최신의 공지 3건 불러오기 */
+    /*getMainNoticeList*/
+    /* 체크 완료 */
+SELECT notice_title, notice_date
+  FROM notice
+WHERE ROWNUM <= 3
+ORDER BY notice_date DESC;
+
+/* PAGE10 */
+    /* 메뉴 이름 불러오기 */
+    /* getMenuName */
+SELECT menu_name 
+    FROM Menu;
+    
+
+/* PAGE11 */
+
+/***********************공지*******************************/
+
+/* PAGE14 */
+    /* 공지 리스트 가져오기  */
+    /* getNoticeList */
+    /*체크 완료 */
+SELECT notice_no, notice_type, notice_title, notice_content, notice_date
+  FROM      notice
+  WHERE notice_type =#{notice_type}
+            /* OR notice_type = #{notice_type}              체크박스가 체크될때마다 더해서 불러준다.*/
+          /*AND ROWNUM > "시작지점" AND ROWNUM < "끝나는 지점" ----- 리스트하단 번호를 누를 때마다 목록을 바꿔주기위한 부분,일단 대강 생각, 더 좋은 아이디어 있을듯, 보완 필요 */
+ORDER BY notice_date DESC;
+
+/* PAGE15 */
+    /* 공지 상세정보 가져오기 */
+    /* getDetailNotice *//* 무효.... 상단의 getNoticeList에서 공지관련리스트를 전부 불러와서 사용한다.
+SELECT n.notice_title, d.dept_name||' '||e.emp_name, n.notice_date, n.notice_content
+  FROM notice n, emp e, dept d
+WHERE n.emp_no = e.emp_no AND e.dept_no = d.deptno AND n.notice_no = 1 #{선택된 공지번호}*/;
+
+/* PAGE17 */
+    /* 신규 공지 등록 */
+    /* insertNotice */
+    /* 체크 완료 */
+INSERT INTO notice (notice_no, notice_type, notice_title, notice_content, notice_date)
+                 VALUES ( #{시퀀스},    #{notice_type},     #{notice_title}  , #{notice_content},  SYSDATE);
+
+/* PAGE19 */
+    /* 공지 수정 */
+    /* updateNotice */
+    /* 체크확인 */
+UPDATE notice
+SET
+notice_type = #{notice_type},           /*검토필요: 화면에는 나와있지 않지만 공지의 분류를 변경가능하게 할것인가?*/
+notice_title = #{notice_title},
+notice_content = #{notice_content},
+notice_date = SYSDATE      /*수정할때 시간을 수정한 시간으로 수정할 것인가?*/
+WHERE notice_no = #{notice_no};
+
+/* PAGE23 */
+    /* 공지 삭제 */
+    /* deleteNotice */
+    /* 체크완료 */
+DELETE notice
+WHERE notice_no =  101/*#{현재 공지상세로 들어올때 받은 공지 번호}*/;
+
+/***********************마이 페이지**********************/
+
+/* PAGE26 */
+    /* 사원 상세 정보 가져오기 */
+    /* getDetailEmp */
+    /* 체크 완료 */
+SELECT e.emp_name, TRUNC(MONTHS_BETWEEN(SYSDATE, emp_hiredate)/12)||'년차', d.dept_name, r.rank_name, e.emp_hiredate, emp_status, e.emp_pw, e.emp_tel, e.emp_email
+  FROM emp e, dept d, rank r
+WHERE e.dept_no = d.dept_no AND e.rank_no = r.rank_no AND emp_no = #{emp_no};
+
+/* PAGE28   지금버전에서는 프로시저를 사용하지 않으므로 자바단에서 패스워드와 패스워드확인이 일치하는 지 확인후 일차히면 비밀번호를 업데이트*/
+    /* 비밀번호 변경 */
+    /* updatePassword */
+    /* 체크 완료 */
+UPDATE emp
+SET
+emp_pw = #{emp_pw}
+WHERE emp_no = #{emp_no};
+
+/***********************일정********************************/
+
+/* PAGE31 */
+    /* getAttendanceThisMonth *//*처음 화면에 들어왔을 때의 현재 달의 일정*/ 
+SELECT attendance_code, emp_no, attendance_start_work
+  FROM attendance
+WHERE emp_no = 1/* #{emp_no} */
+    AND attendance_start_work BETWEEN TRUNC(SYSDATE+1)-TO_CHAR(SYSDATE,'DD') AND TRUNC(LAST_DAY(SYSDATE))+0.99999421; 
+
+    /* getAttendanceOptional*/
+SELECT attendance_code, emp_no, attendance_start_work
+  FROM attendance
+WHERE emp_no = "#현재 접속중인 사원의 사원번호"
+    AND attendance_start_work BETWEEN TRUNC("#입력받은 날짜의 달" +1)-TO_CHAR("#입력받은 날짜의 달", 'DD') AND TRUNC(LAST_DAY("#입력받은 날짜의 달")) + 0.9999942;
+
+/* PAGE32 */
+    /*공통 일정 조회 */
+    /* getCommonScheduleList */
+SELECT schedule_code, emp_no, schedule_type, schedule_title, schedule_startdate, schedule_enddate, schedule_content
+  FROM schedule
+WHERE schedule_type = '공통';
+
+    /*부서 일정 조회 */
+    /* getDeptScheduleList */
+SELECT s.schedule_code, s.emp_no, s.schedule_type, s.schedule_title, 
+                s.schedule_startdate, s.schedule_enddate, s.schedule_content d.dept_name
+  FROM schedule s, emp e, dept d
+WHERE s.emp_no = e.emp_no AND e.dept_no = d.dept_no AND schedule_type = '부서';
+
+    /*사원 일정 조회 */
+    /* getEmpScheduleList */
+SELECT schedule_code, emp_no, schedule_type, schedule_title, 
+                schedule_startdate, schedule_enddate, schedule_content
+  FROM schedule
+WHERE emp_no = emp_no AND emp_no = "#접속중인 사원의 사원번호" AND schedule_type = '사원';
+
+/* PAGE33 */
+    /* insertSchedule */
+    /* 체크 완료 */
+INSERT INTO schedule (schedule_code, emp_no, schedule_type, schedule_title, schedule_startdate, schedule_enddate, schedule_content)
+                        VALUES (#{schedule_code}, #{emp_no}, #{schedule_type}, #{schedule_title} , #{schedule_startdate}, #{schedule_enddate}, #{schedule_content} );
+
+/* PAGE34 */
+     /*일정의 작성자가 맞는지 확인하기 위해 일정작성시 저장된 사원번호 불러오기 */
+    /* getScheduleWriter */
+    /* 체크 완료 */
+SELECT emp_no FROM schedule WHERE schedule_code = #{schedule_code};
+
+    /* 일정 수정 */
+    /* updateSchedule */
+    /* 체크 완료 */
+UPDATE schedule
+SET 
+    emp_no = #{emp_no},
+    schedule_type = #{schedule_type},
+    schedule_title = #{schedule_title},
+    schedule_startdate = #{schedule_startdate},
+    schedule_enddate = #{schedule_enddate},
+    schedule_content = #{schedule_content}
+WHERE  schedule_code = #{schedule_code};
+
+/* PAGE35 */
+    /*일정 삭제 */
+    /* deleteSchedule */
+    /* 체크 완료 */
+DELETE schedule WHERE schedule_code = #{schedule_code};
+
+
+
+/**************************회계********************************/
+
+
+
+
+/***************************인사*******************************/
+
+/* PAGE56 */
+    /* 사원 리스트 출력 */
+    /* getEmpList */
+    /* 체크 완료 */
+SELECT e.emp_no, e.emp_name, d.dept_name, r.rank_name, e.emp_status
+  FROM emp e, dept d, rank r
+WHERE e.dept_no = d.dept_no AND e.rank_no = r.rank_no  /* 이 페이지에 사원 조건 검색이 추가 될 경우 where절 수정 필요*/
+ORDER BY emp_no ASC;
+
+CREATE OR REPLACE PROCEDURE proc_emp_list (pdname    VARCHAR2
+                                           ,prname   rank.rank_name%TYPE
+                                           ,pename     emp.emp_name%TYPE
+                                           ,e_cursor OUT sys_refcursor)
+IS 
+
+BEGIN
+  IF (pdname!='전체') THEN/* 부서를 선택한 경우 */
+         IF(prname!='전체') THEN /* 직위를 선택한 경우 */
+                              IF(pename!='') THEN /* 사원명을 검색한 경우 */
+                                OPEN e_cursor FOR 
+                                SELECT e.emp_no
+                                         ,e.emp_name
+                                         ,d.dept_name
+                                         ,r.rank_name
+                                         ,e.emp_status
+                                     FROM emp E, dept d, RANK r
+                                     WHERE e.dept_no = d.dept_no AND e.rank_no = r.rank_no AND d.dept_name =pdname AND r.rank_name = prname  AND e.emp_name = pename
+                                     ORDER BY emp_no ASC;  
+                                     
+                              ELSE /* 사원을 검색하지 않은 경우 */
+                                OPEN e_cursor FOR 
+                                      SELECT e.emp_no
+                                             ,e.emp_name
+                                             ,d.dept_name
+                                             ,r.rank_name
+                                             ,e.emp_status
+                                     FROM emp E, dept d, RANK r
+                                     WHERE e.dept_no = d.dept_no AND e.rank_no = r.rank_no AND d.dept_name =pdname AND r.rank_name = prname
+                                     ORDER BY emp_no ASC;
+                              END IF;
+         ELSE /* 직위를 선택하지 않은 경우*/
+                              IF(pename!='') THEN /* 사원명을 검색한 경우 */
+                                OPEN e_cursor FOR 
+                                SELECT e.emp_no
+                                         ,e.emp_name
+                                         ,d.dept_name
+                                         ,r.rank_name
+                                         ,e.emp_status
+                                     FROM emp E, dept d, RANK r
+                                     WHERE e.dept_no = d.dept_no AND e.rank_no = r.rank_no AND d.dept_name =pdname AND e.emp_name = pename
+                                     ORDER BY emp_no ASC;  
+                                     
+                              ELSE /* 사원을 검색하지 않은 경우 */
+                                OPEN e_cursor FOR 
+                                      SELECT e.emp_no
+                                             ,e.emp_name
+                                             ,d.dept_name
+                                             ,r.rank_name
+                                             ,e.emp_status
+                                     FROM emp E, dept d, RANK r
+                                     WHERE e.dept_no = d.dept_no AND e.rank_no = r.rank_no AND d.dept_name =pdname
+                                     ORDER BY emp_no ASC;
+                              END IF;
+         END IF;
+  ELSE/* 부서를 선택하지 않은 경우 */
+         IF(prname!='전체') THEN /* 직위를 선택한 경우 */
+                              IF(pename!='') THEN /* 사원명을 검색한 경우 */
+                                OPEN e_cursor FOR 
+                                SELECT e.emp_no
+                                         ,e.emp_name
+                                         ,d.dept_name
+                                         ,r.rank_name
+                                         ,e.emp_status
+                                     FROM emp E, dept d, RANK r
+                                     WHERE e.dept_no = d.dept_no AND e.rank_no = r.rank_no AND r.rank_name = prname  AND e.emp_name = pename
+                                     ORDER BY emp_no ASC;  
+                                     
+                              ELSE /* 사원을 검색하지 않은 경우 */
+                                OPEN e_cursor FOR 
+                                      SELECT e.emp_no
+                                             ,e.emp_name
+                                             ,d.dept_name
+                                             ,r.rank_name
+                                             ,e.emp_status
+                                     FROM emp E, dept d, RANK r
+                                     WHERE e.dept_no = d.dept_no AND e.rank_no = r.rank_no AND r.rank_name = prname
+                                     ORDER BY emp_no ASC;
+                              END IF;
+         ELSE /* 직위를 선택하지 않은 경우*/
+                              IF(pename!='') THEN /* 사원명을 검색한 경우 */
+                                OPEN e_cursor FOR 
+                                SELECT e.emp_no
+                                         ,e.emp_name
+                                         ,d.dept_name
+                                         ,r.rank_name
+                                         ,e.emp_status
+                                     FROM emp E, dept d, RANK r
+                                     WHERE e.dept_no = d.dept_no AND e.rank_no = r.rank_no AND e.emp_name = pename
+                                     ORDER BY emp_no ASC;  
+                                     
+                              ELSE /* 아무것도 선택하지 않고 검색한 경우 */
+                                OPEN e_cursor FOR 
+                                      SELECT e.emp_no
+                                             ,e.emp_name
+                                             ,d.dept_name
+                                             ,r.rank_name
+                                             ,e.emp_status
+                                     FROM emp E, dept d, RANK r
+                                     WHERE e.dept_no = d.dept_no AND e.rank_no = r.rank_no
+                                     ORDER BY emp_no ASC;
+                              END IF;
+         END IF;
+  END IF;
+     EXCEPTION
+     WHEN OTHERS THEN
+     DBMS_OUTPUT.PUT_LINE('SQL ERROR MESSAGE: '|| SQLERRM);
+    close e_cursor;
+END;
+
+
+/* PAGE57 */
+    /* 사원 정보 등록 */
+    /* insertEmpInfo */
+    /* 체크 완료 */
+INSERT INTO emp (emp_no, emp_name, emp_pw, emp_status, dept_no, rank_no, emp_job, emp_hiredate, emp_retiredate, emp_email, emp_tel, emp_auth, emp_picture_path)
+                VALUES(#{시퀀스}, #{emp_name], #{emp_pw}, #{emp_status}, #{dept_no}, #{rank_no}, #{emp_job}, #{emp_hiredate}, #{emp_retiredate}, #{emp_email}, #{emp_tel}, #{emp_auth}. #{emp_picture_path});
+
+/* PAGE59 */
+    /* 자격증 정보 등록 */
+    /* insertLIcenceInfo */
+     /* 체크 완료 */
+INSERT INTO licence_emp (emp_no, licence_no) VALUES( #{emp_no}, #{licence_no});
+
+/* PAGE 63 */
+    /* 사원 정보 수정 */
+    /* updateEmpInfo */
+     /* 체크 완료 */
+UPDATE emp
+SET
+    emp_name = #{emp_name}
+    ,emp_status = #{emp_status}
+    ,dept_no = #{dept_no}
+    ,rank_no = #{rank_no}
+    ,emp_job = #{emp_job}
+    ,emp_retiredate = #{emp_retiredate}
+    ,emp_email = #{emp_email}
+    ,emp_tel = #{emp_tel}
+    ,emp_auth = #{emp_auth}
+    ,emp_picture_path = #{emp_picture_path}
+WHERE emp_no =#{emp_no};
+
+
+
+/**************************전자결재********************************/
+
+
+
+/**************************프로젝트 관리***************************/
+
+/* PAGE 70 */
+    /*프로젝트 리스트 조회 */
+    /* getProjectList */
+SELECT p.project_name, p.project_startline || ' ~ ' || p.project_deadline, e.emp_name, p.project_type 
+FROM project p, project_emp pe, emp e
+WHERE p.project_no = pe.project_no AND pe.emp_no = e.emp_no;
+
+    /*프로젝트 상세 조회 */
+    /* getDetailProject */
+SELECT p.project_name, p.project_client, e.emp_name, p.project_tech, p.project_startline, p.project_deadline, p.project_profit, p.project_type, p.project_content
+FROM project p, project_emp pe, emp e
+WHERE p.project_no = pe.project_no AND pe.emp_no = e.emp_no AND p.project_no = "{#선택한 프로젝트 번호}";
+
+    /*프로젝트 인원 리스트 조회 */
+    /* getProjectMemberList */
+SELECT e.emp_name
+   FROM emp e, project_emp pe, project p
+WHERE p.project_no = pe.project_no AND pe.emp_no = e.emp_no AND p.project_no = "{#선택한 프로젝트 번호}";
+
+
+/* PAGE 71 */
+    /*프로젝트 이력추가              ---- 프로젝트 이력추가에서 인원선택 */
+    /* insertProjectInfo */
+INSERT INTO project (project_no, project_name, project_profit, project_client, project_startline, project_deadline, project_type, project_content, project_register, project_tech)
+                       VALUES( "#시퀀스", "#프로젝트명", "#프로젝트수익", "#발주사", "#시작일", "#마감일", "#프로젝트분류", "개발내용", "적용기술");
+                       
+    /* page56의  사원선택 쿼리문으로 사원을 선택하여 자바 로직단에서 Map리스트를 만들고 Map리스트를 입력값으로 하여 Project_Emp 테이블에 insert한다. */ 
+    /* insertProjectMember */
+INSERT INTO project_emp ( project_no, emp_no, project_manager) VALUES(#{project_no, #{emp_no}, #{project_manager});
+
+
+
+
+
+ /* emp_no, emp_name, emp_pw, emp_status, rank_no, dept_no, emp_job, emp_hiredate, emp_retiredate, emp_email, emp_tel, emp_auth, emp_picture_path*/
+ 
+ /* sal_code, emo_no, sal_date, sal_base, sal_incentive, sal_position, sal_tech, sal_etc, sal_meal, sal_commu, sal_payment, sal_nation_pension, sal_health, sal_industrial_insurance, sal_employ_insurance, sal_income_tax, sal_local_tax, sal_deduction_etc, sal_deductions, sal_total */
+ 
+ /* licence_no, licence_name, licence_type, licence_level, licence_date, licence_expire, licence_incentive */

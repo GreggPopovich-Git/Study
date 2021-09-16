@@ -1,0 +1,12 @@
+package com.jslhrd.mysql.manager;
+
+import java.sql.Connection;
+import java.sql.Statement;
+
+public class TestSQL {
+	DBManager manager = DBManager.getInstance();
+	Connection myConn = null;
+	Statement stmt = null;
+	ResultSet rs = null;
+	
+}

@@ -1,0 +1,20 @@
+package service.admin.member;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import service.CommandHandler;
+
+public class MemberMailHandler implements CommandHandler {
+
+	@Override
+	public String requestPro(HttpServletRequest request, HttpServletResponse response) throws Throwable {
+		String subject = request.getParameter("subject");
+		String contents = request.getParameter("contents");
+		
+		
+		
+		return "/Admin/member_mail.jsp";
+	}
+
+}

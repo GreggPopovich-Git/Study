@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd"> 
+<mapper namespace="com.mybatis.mapper.MainMapper">
+
+	<!-- login 시 DB에서 아이디에 해당하는 비번을 불러와서 사용자가 입력한 비번과 일치하면 로그인 -->
+	<select id="getLoginInfo" parameterType="map" resultType="map">
+		SELECT emp_pw, emp_name, d.dept_name as dept_name FROM emp e, dept d 
+		 WHERE e.dept_no = d.dept_no AND emp_no=#{login_no}
+	</select>
+
+	<!-- 사원의 이름, 직위, 부서명 가져오기 -->
+	<select id="getWhoIAm" parameterType="int" resultType="string">
+		SELECT d.dept_name||' - '|| r.rank_name ||' - '||  e.emp_name
+		  FROM emp e, dept d, rank r
+		  WHERE r.rank_no=e.rank_no AND e.dept_no=d.dept_no AND e.emp_no=#{emp_no}
+	</select>
+
+	<!-- 출근 등록 -->
+	<insert id="insertAttendanceTime" parameterType="map">
+      INSERT INTO attendance (attendance_no, emp_no, attendance_start_work) VALUES(seq_attendance.NEXTVAL, #{emp_no}, SYSDATE)
+   </insert>
+   
+	<!-- 출근 체크 -->
+   <select id="checkAttendance" parameterType="string" resultType="int">
+   		SELECT emp_no FROM attendance
+   		where emp_no = #{emp_no} AND attendance_start_work = TO_CHAR(SYSDATE)
+   </select>
+	
+	<!-- 최신 공지 3건 불러오기 -->
+	<select id="getMainNoticeList" resultType="map">
+		SELECT notice_title, notice_date
+ 		  FROM notice
+		 WHERE rownum <![CDATA[<=]]> 3
+		ORDER BY notice_date DESC
+	</select>
+	
+	<!-- 메뉴 이름 불러오기 -->
+	<select id="getMenuName" resultType="string">
+		SELECT menu_name 
+    	  FROM Menu
+	</select>
+
+</mapper>
